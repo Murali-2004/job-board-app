@@ -65,10 +65,24 @@ export const getAdminDashboard = async (req, res) => {
 // Admin controller to get all users
 export const getAllUsers = async (req, res) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
     const users = await User.find()
       .select("name email role createdAt")
-      .sort({ createdAt: -1 });
-    return res.status(200).json(users);
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    const totalUsers = await User.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+    return res.status(200).json({
+      currentPage: page,
+      totalPages,
+      totalUsers,
+      users,
+    });
   } catch (error) {
     console.error("Get all users error:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -109,10 +123,25 @@ export const deleteUser = async (req, res) => {
 // Admin controller to get all jobs
 export const getAllJobs = async (req, res) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
     const jobs = await Job.find()
       .populate("postedBy", "name email")
-      .sort({ createdAt: -1 });
-    return res.status(200).json(jobs);
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalJobs = await Job.countDocuments();
+    const totalPages = Math.ceil(totalJobs / limit);
+    return res.status(200).json({
+      currentPage: page,
+      totalPages,
+      totalJobs,
+      jobs,
+    });
   } catch (error) {
     console.error("Get all jobs error:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -173,6 +202,128 @@ export const getJobStatistics = async (req, res) => {
     });
   } catch (error) {
     console.error("Get job statistics error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// Admin controller to block a user
+export const blockUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    user.isBlocked = true;
+    await user.save();
+
+    return res.status(200).json({
+      message: "User blocked successfully",
+    });
+  } catch (error) {
+    console.error("Block user error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// Admin controller to unblock a user
+export const unblockUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    user.isBlocked = false;
+    await user.save();
+
+    return res.status(200).json({
+      message: "User Unblocked successfully",
+    });
+  } catch (error) {
+    console.error("UnBlock user error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// Admin controller to search users by name or email
+export const searchUsers = async (req, res) => {
+  try {
+    const keyword = req.query.keyword || "";
+
+    const users = await User.find({
+      $or: [
+        {
+          name: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+        {
+          email: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+      ],
+    }).select("-password");
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Search users error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// Admin controller for to get a job by search
+export const searchJobs = async (req, res) => {
+  try {
+    const keyword = req.query.keyword || "";
+
+    const jobs = await Job.find({
+      $or: [
+        {
+          title: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+        {
+          company: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+        {
+          location: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+      ],
+    }).populate("postedBy", "name email");
+
+    return res.status(200).json(jobs);
+  } catch (error) {
+    console.error("Search jobs error:", error);
 
     return res.status(500).json({
       message: "Internal server error",

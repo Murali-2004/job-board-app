@@ -7,6 +7,10 @@ import {
   getAllJobs,
   deleteJob,
   getJobStatistics,
+  blockUser,
+  unblockUser,
+  searchUsers,
+  searchJobs,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -33,5 +37,20 @@ router.get(
   authorizeRoles("admin"),
   getJobStatistics,
 );
+
+// route for to block and unblock user by admin
+router.put("/users/:userId/block", protect, authorizeRoles("admin"), blockUser);
+router.put(
+  "/users/:userId/unblock",
+  protect,
+  authorizeRoles("admin"),
+  unblockUser,
+);
+
+// route for get user by search
+router.get("/users/search", protect, authorizeRoles("admin"), searchUsers);
+
+// route for get job by search
+router.get("/jobs/search", protect, authorizeRoles("admin"), searchJobs);
 
 export default router;
