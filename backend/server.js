@@ -9,6 +9,7 @@ import jobRoutes from "./routes/jobRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import recruiterRoutes from "./routes/recruiterRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -27,6 +28,9 @@ app.use("/api/applications", applicationRoutes);
 app.use("/api/users", userRoutes);
 // New route for recruiter-related operations (e.g., dashboard)
 app.use("/api/recruiters", recruiterRoutes);
+
+// New route for admin-related operations (e.g., dashboard)
+app.use("/api/admin", adminRoutes);
 
 //Basic route to test server
 app.get("/", (req, res) => {

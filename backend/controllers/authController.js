@@ -16,6 +16,11 @@ export const register = async (req, res) => {
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
+    if (!role || !["jobseeker", "recruiter"].includes(role)) {
+      return res.status(400).json({
+        message: "Role must be either jobseeker or recruiter",
+      });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       name,
