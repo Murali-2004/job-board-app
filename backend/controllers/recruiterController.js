@@ -71,19 +71,31 @@ export const getRecruiterProfile = async (req, res) => {
   }
 };
 
-// Get jobs posted by the recruiter
+//Get All Jobs Created by Recruiter(Recruiter Only)
 export const getRecruiterJobs = async (req, res) => {
   try {
-    const jobs = await Job.find({ postedBy: req.user._id });
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const userId = req.user._id;
+    const jobs = await Job.find({ postedBy: userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalJobs = await Job.countDocuments({ postedBy: userId });
+    const totalPages = Math.ceil(totalJobs / limit);
+
     return res.status(200).json({
-      totalJobs: jobs.length,
-      jobs,
+      TotalPages: totalPages,
+      CurrentPage: page,
+      TotalJobs: totalJobs,
+      Jobs: jobs,
     });
   } catch (error) {
-    console.error("Get recruiter jobs error:", error);
-    return res.status(500).json({
-      message: "Internal server error",
-    });
+    console.error("Get Recruiter job Error", error);
+    return res.status(500).json({ message: "Internal server Error" });
   }
 };
 
@@ -109,6 +121,7 @@ export const deleteRecruiterJob = async (req, res) => {
     });
   }
 };
+
 
 // Update job posted by the recruiter
 export const updateRecruiterJob = async (req, res) => {

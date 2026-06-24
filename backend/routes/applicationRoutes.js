@@ -13,7 +13,7 @@ const router = express.Router();
 // Apply for a job (applicant only)
 router.post("/apply/:jobId", protect, authorizeRoles("jobseeker"), applyForJob);
 
-// Get my applications (applicant only)
+// Get my applications (Jobseeker only)
 router.get(
   "/my-applications",
   protect,

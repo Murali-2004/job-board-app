@@ -1,18 +1,10 @@
 \# MERN Job Board Application
 
-
-
 A full-stack Job Board platform built using MongoDB, Express.js, React.js, and Node.js.
-
-
 
 \## Features
 
-
-
 \### Authentication \& Authorization
-
-
 
 \* User Registration
 
@@ -26,11 +18,7 @@ A full-stack Job Board platform built using MongoDB, Express.js, React.js, and N
 
 \* Secure Logout
 
-
-
 \### Password Management
-
-
 
 \* Forgot Password via Email OTP
 
@@ -40,11 +28,7 @@ A full-stack Job Board platform built using MongoDB, Express.js, React.js, and N
 
 \* Token Invalidation after Password Reset
 
-
-
 \### Job Management
-
-
 
 \* Create Job Posting
 
@@ -56,11 +40,7 @@ A full-stack Job Board platform built using MongoDB, Express.js, React.js, and N
 
 \* Remove Saved Jobs
 
-
-
 \### Application Management
-
-
 
 \* Apply for Jobs
 
@@ -72,19 +52,13 @@ A full-stack Job Board platform built using MongoDB, Express.js, React.js, and N
 
 \* Resume Upload Support
 
-
-
 \### Recruiter Dashboard
-
-
 
 \* Total Jobs Posted
 
 \* Total Applications Received
 
 \* Application Status Analytics
-
-
 
 &#x20; \* Applied
 
@@ -94,15 +68,9 @@ A full-stack Job Board platform built using MongoDB, Express.js, React.js, and N
 
 &#x20; \* Rejected
 
-
-
 \## Tech Stack
 
-
-
 \### Backend
-
-
 
 \* Node.js
 
@@ -112,39 +80,23 @@ A full-stack Job Board platform built using MongoDB, Express.js, React.js, and N
 
 \* Mongoose
 
-
-
 \### Authentication
-
-
 
 \* JWT
 
 \* bcryptjs
 
-
-
 \### File Upload
-
-
 
 \* Multer
 
 \* Cloudinary
 
-
-
 \### Email Service
-
-
 
 \* Nodemailer
 
-
-
 \## API Features
-
-
 
 \* Pagination
 
@@ -156,15 +108,9 @@ A full-stack Job Board platform built using MongoDB, Express.js, React.js, and N
 
 \* Role-Based Access Control
 
-
-
 \## Installation
 
-
-
 \### Clone Repository
-
-
 
 ```bash
 
@@ -172,11 +118,7 @@ git clone <repository-url>
 
 ```
 
-
-
 \### Install Dependencies
-
-
 
 ```bash
 
@@ -186,43 +128,31 @@ npm install
 
 ```
 
-
-
 \### Configure Environment Variables
-
-
 
 Create a `.env` file inside the backend folder.
 
-
-
 Required variables:
-
-
 
 \* PORT
 
-\* MONGO\_URI
+\* MONGO_URI
 
-\* ACCESS\_TOKEN\_SECRET
+\* ACCESS_TOKEN_SECRET
 
-\* REFRESH\_TOKEN\_SECRET
+\* REFRESH_TOKEN_SECRET
 
-\* EMAIL\_USER
+\* EMAIL_USER
 
-\* EMAIL\_PASS
+\* EMAIL_PASS
 
-\* CLOUDINARY\_CLOUD\_NAME
+\* CLOUDINARY_CLOUD_NAME
 
-\* CLOUDINARY\_API\_KEY
+\* CLOUDINARY_API_KEY
 
-\* CLOUDINARY\_API\_SECRET
-
-
+\* CLOUDINARY_API_SECRET
 
 \### Run Server
-
-
 
 ```bash
 
@@ -230,13 +160,42 @@ npm run dev
 
 ```
 
-
-
 \## Author
-
-
 
 Murali M
 
+Features
 
+Authentication
 
+- Register/Login
+- JWT Authentication
+- Refresh Tokens
+- Forgot Password with OTP
+
+Job Seeker
+
+- View Jobs
+- Search Jobs
+- Save Jobs
+- Apply Jobs
+- View Applications
+
+Recruiter
+
+- Create Jobs
+- Manage Jobs
+- Dashboard Statistics
+- Update Application Status
+- Email Notifications
+
+Admin
+
+- View Users
+- Search Users
+- Block/Unblock Users
+- Delete Users
+- View Jobs
+- Search Jobs
+- Delete Jobs
+- Dashboard Analytics

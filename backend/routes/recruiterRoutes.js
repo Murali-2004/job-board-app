@@ -18,7 +18,12 @@ router.get(
 );
 
 // Route for getting jobs posted by the recruiter
-router.get("/jobs", protect, authorizeRoles("recruiter"), getRecruiterJobs);
+router.get(
+  "/getRecruiterJobs",
+  protect,
+  authorizeRoles("recruiter"),
+  getRecruiterJobs,
+);
 
 // Route for deleting a job posted by the recruiter
 router.delete(

@@ -24,32 +24,56 @@ export const applyForJob = async (req, res) => {
       applicant: applicantId,
     });
 
-    res
+    return res
       .status(201)
       .json({ message: "Application submitted successfully", application });
   } catch (error) {
     console.error("Apply for job error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
 // Get My all applications
 export const getUserApplications = async (req, res) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const applicantId = req.user._id;
     const applications = await Application.find({
       applicant: applicantId,
-    }).populate("job", "title company location");
-    res.status(200).json(applications);
+    })
+      .populate("job", "title company location")
+      .skip(skip)
+      .limit(limit);
+    if (!applications) {
+      return res.status(400).json({ message: "Application Not Found" });
+    }
+
+    const totalApplications = await Application.countDocuments({
+      applicant: applicantId,
+    });
+    const totalPages = Math.ceil(totalApplications / limit);
+    return res.status(200).json({
+      TotalPages: totalPages,
+      CurrentPage: page,
+      TotalApplications: totalApplications,
+      applications,
+    });
   } catch (error) {
     console.error("Get user applications error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
 // Get received applications (for Recruiter)
 export const getJobApplications = async (req, res) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const jobs = await Job.find({ postedBy: req.user._id });
     if (!jobs || jobs.length === 0) {
       return res
@@ -61,15 +85,22 @@ export const getJobApplications = async (req, res) => {
       job: { $in: jobIds },
     })
       .populate("applicant", "name email resume")
-      .populate("job", "title company");
+      .populate("job", "title company")
+      .skip(skip)
+      .limit(limit);
+
+    const totalReceivedApplication = await applications.length;
+    const totalPages = Math.ceil(totalReceivedApplication / limit);
 
     return res.status(200).json({
-      totalApplications: applications.length,
-      applications,
+      TotalPages: totalPages,
+      CurrentPage: page,
+      TotalReceivedApplicant: totalReceivedApplication,
+      Applications: applications,
     });
   } catch (error) {
     console.error("Get job applications error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -109,6 +140,7 @@ ${application.job.company}`,
         });
       } catch (emailError) {
         console.error("Email sending failed:", emailError);
+        // return res.status(500).json({ message: "Email sending failed" });
       }
     }
 
@@ -118,7 +150,7 @@ ${application.job.company}`,
     });
   } catch (error) {
     console.error("Update application status error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -143,9 +175,9 @@ export const getApplicationById = async (req, res) => {
       application.status = "Under Review";
       await application.save();
     }
-    res.status(200).json(application);
+    return res.status(200).json(application);
   } catch (error) {
     console.error("Get application by ID error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

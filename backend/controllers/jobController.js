@@ -22,10 +22,10 @@ export const createJob = async (req, res) => {
       jobType,
       postedBy: req.user._id,
     });
-    res.status(201).json({ message: "Job created successfully", job });
+    return res.status(201).json({ message: "Job created successfully", job });
   } catch (error) {
     console.error("Create job error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -64,7 +64,6 @@ export const getJobs = async (req, res) => {
         query.salaryRange.$lte = maxSalary;
       }
     }
-    console.log("Before Entering into DB 👉", query);
     const totalJobs = await Job.countDocuments(query);
     const jobs = await Job.find(query)
       .sort({ createdAt: -1 })
@@ -74,15 +73,12 @@ export const getJobs = async (req, res) => {
     console.log("Jobs found 👉", jobs);
     const totalPages = Math.ceil(totalJobs / limit);
 
-    console.log("Sending response now...");
     return res.status(200).json({
       totalJobs,
       totalPages,
       currentPage: page,
       jobs,
     });
-
-    console.log("This should never run");
   } catch (error) {
     console.error("Get jobs error:", error);
     return res.status(500).json({ message: "Internal server error" });

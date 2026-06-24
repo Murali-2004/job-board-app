@@ -28,10 +28,12 @@ export const register = async (req, res) => {
       password: hashedPassword,
       role,
     });
-    res.status(201).json({ message: "User registered successfully", user });
+    return res
+      .status(201)
+      .json({ message: "User registered successfully", user });
   } catch (error) {
     console.error("Registration error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -52,6 +54,7 @@ export const login = async (req, res) => {
         message: "Your account has been blocked by admin",
       });
     }
+    user.tokenVersion = 0;
 
     const accessToken = generateAccessToken(user._id, user.tokenVersion);
 
@@ -59,11 +62,11 @@ export const login = async (req, res) => {
 
     user.refreshToken = refreshToken;
     await user.save();
-    res
+    return res
       .status(200)
       .json({ message: "Login successful", accessToken, refreshToken });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -82,10 +85,12 @@ export const refreshAccessToken = async (req, res) => {
     }
 
     const newAccessToken = generateAccessToken(user._id, user.tokenVersion);
-    res.status(200).json({ accessToken: newAccessToken });
+    return res.status(200).json({ accessToken: newAccessToken });
   } catch (error) {
     console.error("Refresh token error:", error);
-    res.status(403).json({ message: "Invalid or expired refresh token" });
+    return res
+      .status(403)
+      .json({ message: "Invalid or expired refresh token" });
   }
 };
 
@@ -97,11 +102,12 @@ export const logout = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     user.refreshToken = null;
+    user.tokenVersion = 1;
     await user.save();
-    res.status(200).json({ message: "Logout successful" });
+    return res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.error("Logout error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -132,12 +138,12 @@ export const forgotPassword = async (req, res) => {
       text: `Your OTP for password reset is: ${otp}`,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Email sent successfully",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Email failed",
     });
   }
@@ -164,7 +170,7 @@ export const verifyOTP = async (req, res) => {
       .json({ message: "OTP verified, you can now reset your password" });
   } catch (error) {
     console.error(error);
-    res
+    return res
       .status(500)
       .json({ message: "Internal server error through verify OTP" });
   }
@@ -192,7 +198,7 @@ export const resetPassword = async (req, res) => {
     return res.status(200).json({ message: "Password reset successful" });
   } catch (error) {
     console.error(error);
-    res
+    return res
       .status(500)
       .json({ message: "Internal server error through reset password" });
   }

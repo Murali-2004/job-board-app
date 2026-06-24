@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-console.log(process.env.EMAIL_USER);
-console.log(process.env.EMAIL_PASS ? "EMAIL PASS FOUND" : "EMAIL PASS MISSING");
+// console.log(process.env.EMAIL_USER);
+// console.log(process.env.EMAIL_PASS ? "EMAIL PASS FOUND" : "EMAIL PASS MISSING");
 
 export default transporter;
